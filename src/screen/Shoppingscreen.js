@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, FlatList, ActivityIndicator, Text,image} from "react-native";
+import { View, StyleSheet, FlatList, ActivityIndicator} from "react-native";
 import ItemCard from "./components/ltemCard";
 const Shoppingscreen = () => {
   const [products, setProducts] = useState([]);
@@ -20,10 +20,7 @@ const Shoppingscreen = () => {
     fetchData();
   }, []);
 
-  const handleItemPress = (item) => {
-    console.log("Item pressed:", item);
-    // สามารถนำทางไปยังหน้าดูรายละเอียดสินค้าได้ที่นี่
-  };
+
 
   return (
     <View style={styles.container}>
@@ -64,7 +61,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3, // สำหรับ Android
+    elevation: 3,
   },
   title: {
     fontSize: 18,

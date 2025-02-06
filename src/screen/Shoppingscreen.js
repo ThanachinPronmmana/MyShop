@@ -1,10 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, FlatList, ActivityIndicator} from "react-native";
+import { View, StyleSheet, FlatList, ActivityIndicator,TextInput,TouchableOpacity, Alert} from "react-native";
 import ItemCard from "./components/ltemCard";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 const Shoppingscreen = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const [newproduct,setnewProducts] = useState({
+    title:"",
+    price:"",
+    category:"",
+    image:"",
+  })
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -19,6 +25,23 @@ const Shoppingscreen = () => {
     };
     fetchData();
   }, []);
+  
+  const addProduct = () =>{
+    if(!newproduct.title || !newproduct.price || !newproduct.category || !newproduct.image){
+      Alert.alert("Err","Please enter both ")
+      return;
+    }
+    const newProductcard = {id:Date.now().toString(),title,price,category,image}
+    const updateProduct = [newProductcard,...products]
+
+    setnewProducts((updateProduct))
+    setnewProducts({
+      title: "",
+      price: "",
+      category: "",
+      image: "",
+    });
+  }
 
 
 

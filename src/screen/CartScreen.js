@@ -3,7 +3,7 @@ import {View,StyleSheet,Text,TouchableOpacity} from 'react-native'
 const CartScreen = ()=>{
     return(
         <View>
-            
+            <Text></Text>
         </View>
     )
 }

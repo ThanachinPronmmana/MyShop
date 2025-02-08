@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, FlatList, ActivityIndicator, TextInput, Alert, TouchableOpacity,Text } from "react-native";
+import { View, StyleSheet, FlatList, ActivityIndicator, TextInput, Alert, TouchableOpacity, Text } from "react-native";
 import ItemCard from "./components/ltemCard";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Icon } from "react-native-vector-icons/Icon";
 const Shoppingscreen = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -11,6 +12,9 @@ const Shoppingscreen = () => {
     category: "",
     image: "",
   })
+  const [searchText, setSearchText] = useState("")
+  const [showSearch,setShowSearch] = useState(false)
+  const [showDarkmode,setDarkmode] = useState(false)
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -25,16 +29,20 @@ const Shoppingscreen = () => {
     };
     fetchData();
   }, []);
-
+  
   const addProduct = () => {
     const { title, price, category, image } = newproduct;
-
+    const setURLImage = /^(https?:\/\/.*\.(?:png|jpg|jpeg|gif|webp|svg))$/i
     if (!title || !price || !category || !image) {
       Alert.alert("Err", "Please fill in all fields")
       return;
     }
-    if(isNaN(price) || parseFloat(price) <= 0){
-      Alert.alert("Err","Price must be a valid number greater than 0.")
+    if (isNaN(price) || parseFloat(price) <= 0) {
+      Alert.alert("Err", "Price must be a valid number greater than 0.")
+      return;
+    }
+    if (!setURLImage.test(image)) {
+      Alert.alert("Error", "Please enter a valid image URL (png, jpg, jpeg, gif, webp, svg).");
       return;
     }
     const newProductscard = {
@@ -44,17 +52,41 @@ const Shoppingscreen = () => {
       category: category,
       image: image,
     }
-    setProducts((prevProduct)=>[...prevProduct,newProductscard])
+    setProducts((prevProduct) => [...prevProduct, newProductscard])
     setnewProducts({
       title: "",
       price: "",
       category: "",
       image: ""
     })
+    setSearchText="";
   }
-
+  const filteredProduct = products.filter((item) =>
+    item.title.toLowerCase().includes(searchText.toLowerCase())
+  )
+  const toggleSearch = ()=>{
+    setShowSearch(prev => !prev)
+  }
+  const toggleDarkmode = ()=>{
+    setDarkmode(prev => !prev)
+  }
   return (
-    <View style={styles.container}>
+    <View style={[styles.container,showDarkmode ? styles.darkcontainer : styles.lightcontainer]} >
+      
+      <TouchableOpacity style={styles.toggleBotton} onPress={{toggleDarkmode}}>
+        <Text>
+          <Icon name={darkMode ? "dark-mode" : "light-mode"}
+          size={24}
+          color="#fff"
+          />
+        </Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={toggleSearch}>
+        <Text>
+          {showSearch ? "Hide Search" : "Show Search"}
+        </Text>
+      </TouchableOpacity>
+      { showSearch &&(
       <TextInput
         style={styles.input}
         placeholder="Enter title"
@@ -63,14 +95,18 @@ const Shoppingscreen = () => {
           setnewProducts((prev) => ({ ...prev, title: text }))
         }}
       />
+      )}
+      { showSearch &&(
       <TextInput
         style={styles.input}
         placeholder="Enter price"
         value={newproduct.price}
         onChangeText={(text) => {
-          setnewProducts((prev) => ({ ...prev, price: text }))
+          setnewProducts((prev) => ({ ...prev, price: parseFloat(text) || "" }))
         }}
       />
+    )}
+    { showSearch &&(
       <TextInput
         style={styles.input}
         placeholder="Enter category"
@@ -79,6 +115,8 @@ const Shoppingscreen = () => {
           setnewProducts((prev) => ({ ...prev, category: text }))
         }}
       />
+    )}
+    { showSearch &&(
       <TextInput
         style={styles.input}
         placeholder="Enter image URL"
@@ -87,6 +125,7 @@ const Shoppingscreen = () => {
           setnewProducts((prev) => ({ ...prev, image: text }))
         }}
       />
+    )}
       <TouchableOpacity style={styles.addbutton} onPress={addProduct}>
         <Text style={styles.buttontext}>
           Add Product
@@ -96,7 +135,7 @@ const Shoppingscreen = () => {
         <ActivityIndicator size="large" color="#0000ff" />
       ) : (
         <FlatList
-          data={products}
+          data={filteredProduct}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
             <View style={styles.card}>
@@ -164,6 +203,12 @@ const styles = StyleSheet.create({
   buttontext: {
     fontWeight: "bold",
     color: "#fff"
+  },
+  darkcontainer:{
+    backgroundColor: "#121212",
+  },
+  lightcontainer:{
+    backgroundColor: "#f5f5f5",
   }
 });
 

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { View, StyleSheet, FlatList, ActivityIndicator, TextInput, Alert, TouchableOpacity, Text } from "react-native";
 import ItemCard from "./components/ltemCard";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Icon } from "react-native-vector-icons/Icon";
+import Icon from "react-native-vector-icons/MaterialIcons";
 const Shoppingscreen = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -59,10 +59,10 @@ const Shoppingscreen = () => {
       category: "",
       image: ""
     })
-    setSearchText="";
+    setSearchText("");
   }
   const filteredProduct = products.filter((item) =>
-    item.title.toLowerCase().includes(searchText.toLowerCase())
+    item.category.toLowerCase().includes(searchText.toLowerCase())
   )
   const toggleSearch = ()=>{
     setShowSearch(prev => !prev)
@@ -72,23 +72,22 @@ const Shoppingscreen = () => {
   }
   return (
     <View style={[styles.container,showDarkmode ? styles.darkcontainer : styles.lightcontainer]} >
-      
-      <TouchableOpacity style={styles.toggleBotton} onPress={{toggleDarkmode}}>
-        <Text>
-          <Icon name={darkMode ? "dark-mode" : "light-mode"}
+      <View style={styles.containerIcon}>
+      <TouchableOpacity style={styles.toggleBotton} onPress={toggleDarkmode}>
+          <Icon name={showDarkmode ? "dark-mode" : "light-mode"}
           size={24}
-          color="#fff"
+          style={[styles.Iconset,showDarkmode && styles.darkText]}
           />
-        </Text>
       </TouchableOpacity>
+      </View>
       <TouchableOpacity onPress={toggleSearch}>
-        <Text>
+        <Text style={[styles.textSearch,showDarkmode && styles.darkText]}>
           {showSearch ? "Hide Search" : "Show Search"}
         </Text>
       </TouchableOpacity>
       { showSearch &&(
       <TextInput
-        style={styles.input}
+        style={[styles.input,showDarkmode && styles.darkText]}
         placeholder="Enter title"
         value={newproduct.title}
         onChangeText={(text) => {
@@ -98,7 +97,7 @@ const Shoppingscreen = () => {
       )}
       { showSearch &&(
       <TextInput
-        style={styles.input}
+        style={[styles.input,showDarkmode && styles.darkText]}
         placeholder="Enter price"
         value={newproduct.price}
         onChangeText={(text) => {
@@ -108,7 +107,7 @@ const Shoppingscreen = () => {
     )}
     { showSearch &&(
       <TextInput
-        style={styles.input}
+        style={[styles.input,showDarkmode && styles.darkText]}
         placeholder="Enter category"
         value={newproduct.category}
         onChangeText={(text) => {
@@ -118,7 +117,7 @@ const Shoppingscreen = () => {
     )}
     { showSearch &&(
       <TextInput
-        style={styles.input}
+        style={[styles.input,showDarkmode && styles.darkText]}
         placeholder="Enter image URL"
         value={newproduct.image}
         onChangeText={(text) => {
@@ -192,6 +191,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderColor: "#ccc",
     borderRadius: 5,
+    color:"#000",
   },
   addbutton: {
     backgroundColor: "#4caf50",
@@ -209,6 +209,28 @@ const styles = StyleSheet.create({
   },
   lightcontainer:{
     backgroundColor: "#f5f5f5",
+  },
+  toggleBotton:{
+    color:"#fff",
+    marginRight:10,
+    padding:20,
+  },
+  toggleButtonText:{
+    color:"#fff",
+    marginRight:10,
+    textAlign:"right",
+  },
+  darkText:{
+    color:"#fff",
+  },
+  textSearch:{
+    color:"#000",
+  },
+  containerIcon:{
+    marginLeft:250,
+  },
+  Iconset:{
+    color:"#000"
   }
 });
 
